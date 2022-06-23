@@ -1,0 +1,9 @@
+version: '3'
+services:
+  zammad-gateway:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - ZAMMAD_URL_DOCKER=${ZAMMAD_URL_ENV}
+      - ZAMMAD_API_KEY_DOCKER=${ZAMMAD_API_KEY_ENV}
