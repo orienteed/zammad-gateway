@@ -1,24 +1,26 @@
+from imp import reload
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from services.router import api_router
 import uvicorn
 
 
-def main():
-    app = FastAPI()
+def set_up():
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+	app = FastAPI()
 
-    app.include_router(api_router)
+	app.add_middleware(
+		CORSMiddleware,
+		allow_origins=["*"],
+		allow_credentials=True,
+		allow_methods=["*"],
+		allow_headers=["*"],
+	)
 
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+	app.include_router(api_router)
+
+	uvicorn.run(app, host="0.0.0.0", port=8080)
 
 
 if __name__ == "__main__":
-    main()
+	set_up()

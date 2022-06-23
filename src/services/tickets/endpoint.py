@@ -8,8 +8,10 @@ load_dotenv()
 router = APIRouter()
 
 
+# Get a ticket
 @router.get('/search')
-def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", limit: int = 10, Authorization: str | None = Header(default="")):
+def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", limit: int = 10,
+               Authorization: str | None = Header(default="")):
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
         'Content-Type': 'application/json'
@@ -29,8 +31,11 @@ def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: st
     return reply.json()
 
 
+# Create a ticket
 @router.post('/')
-def createTicket(title: str = Body(default=""), group: str = Body(default=""), customer: str = Body(default=""), article: dict = Body(default={}), Authorization: str | None = Header(default="")):
+def createTicket(title: str = Body(default=""), group: str = Body(default=""), customer: str = Body(default=""),
+                 article: dict = Body(default={"subject": "", "body": "", "type": "", "internal": "", "sender": ""}), 
+				 Authorization: str | None = Header(default="")):
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
         'Content-Type': 'application/json'
@@ -49,13 +54,14 @@ def createTicket(title: str = Body(default=""), group: str = Body(default=""), c
     return reply.json()
 
 
+# Update a ticket
 @router.put("/{ticketId}")
-def updateTicket(ticketId: int, state: dict = Body(default=""), Authorization: str | None = Header(default="")):
+def updateTicket(ticketId: int, state: dict = Body(default={"state": ""}), Authorization: str | None = Header(default="")):
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
         'Content-Type': 'application/json'
     }
-   
+
     customBody = {
         "state": state['state']
     }
@@ -64,4 +70,3 @@ def updateTicket(ticketId: int, state: dict = Body(default=""), Authorization: s
         os.getenv('ZAMMAD_URL'), ticketId), headers=customHeaders, json=customBody)
 
     return reply.json()
-
