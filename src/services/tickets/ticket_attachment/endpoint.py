@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Header
+from email import header
+from fastapi import APIRouter, Header, Response
 from dotenv import load_dotenv
 import requests
 import os
@@ -18,6 +19,11 @@ def getAttachments(ticketId: int, articleId: int, attachmentId: int, Authorizati
     reply = requests.get('{0}/api/v1/ticket_attachment/{1}/{2}/{3}'.format(
         os.getenv('ZAMMAD_URL'), ticketId, articleId, attachmentId), headers=customHeaders)
 
-    print(reply.text())
+    # filename = reply.headers['Content-Disposition'].split(";")[1].split('filename=')[1].replace('"',"")
 
-    return "hola"
+    headers = {
+        "media_type": reply.headers['Content-Type'],
+        "Content-Disposition": reply.headers['Content-Disposition']
+    }
+
+    return Response(content=reply.content, headers=headers)
