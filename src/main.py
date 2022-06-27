@@ -6,7 +6,7 @@ import uvicorn
 
 def set_up():
 
-	app = FastAPI()
+	# app = FastAPI()
 
 	app.add_middleware(
 		CORSMiddleware,
@@ -18,8 +18,13 @@ def set_up():
 
 	app.include_router(api_router)
 
-	uvicorn.run(app, host="0.0.0.0", port=8081)
+	# uvicorn.run(app, host="0.0.0.0", port=8081)
 
 
-if __name__ == "__main__":
-	set_up()
+app = FastAPI()
+
+set_up()
+
+
+# if __name__ == "__main__":
+# 	set_up()

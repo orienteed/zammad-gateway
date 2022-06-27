@@ -6,4 +6,4 @@ WORKDIR /app
 EXPOSE 8081
 
 RUN pip install -r requirements.txt
-CMD ["python", "main.py"]
+CMD ["uvicorn", "main:app", "--port", "8081"]

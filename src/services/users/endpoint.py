@@ -20,7 +20,7 @@ def getCustomer(expand: bool = False, X_On_Behalf_Of: str = None, Authorization:
 
     customParams = {
         'X-On-Behalf-Of': X_On_Behalf_Of,
-		'expand': expand
+        'expand': expand
     }
 
     reply = requests.get('{}/api/v1/users'.format(
