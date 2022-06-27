@@ -1,6 +1,9 @@
+from dotenv import load_dotenv
 from fastapi import APIRouter, Header, Body
 import os
 import requests
+
+load_dotenv()
 
 router = APIRouter()
 
@@ -11,7 +14,7 @@ router = APIRouter()
 def getCustomer(expand: bool = False, X_On_Behalf_Of: str = None, Authorization: str | None = Header(default="")):
 
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -21,7 +24,7 @@ def getCustomer(expand: bool = False, X_On_Behalf_Of: str = None, Authorization:
     }
 
     reply = requests.get('{}/api/v1/users'.format(
-        os.getenv('ZAMMAD_URL')), params=customParams, headers=customHeaders)
+        os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
 
     return reply.json()
 
@@ -33,7 +36,7 @@ def createCustomer(expand: bool = False, firstname: str = Body(default=""), last
                    roles: list = Body(default=["Customer"]), Authorization: str | None = Header(default="")):
 
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -51,6 +54,6 @@ def createCustomer(expand: bool = False, firstname: str = Body(default=""), last
     }
 
     reply = requests.get('{}/api/v1/users'.format(
-        os.getenv('ZAMMAD_URL')), params=customParams, headers=customHeaders, json=customBody)
+        os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders, json=customBody)
 
     return reply.json()

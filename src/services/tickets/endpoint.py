@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Header, Body
 from dotenv import load_dotenv
-import requests
+from fastapi import APIRouter, Header, Body
 import os
+import requests
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ router = APIRouter()
 def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", limit: int = 10,
                Authorization: str | None = Header(default="")):
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -26,7 +26,7 @@ def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: st
     }
 
     reply = requests.get('{}/api/v1/tickets/search'.format(
-        os.getenv('ZAMMAD_URL')), params=customParams, headers=customHeaders)
+        os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
 
     return reply.json()
 
@@ -37,7 +37,7 @@ def createTicket(title: str = Body(default=""), group: str = Body(default=""), c
                  article: dict = Body(default={"subject": "", "body": "", "type": "", "internal": "", "sender": ""}), 
 				 Authorization: str | None = Header(default="")):
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -49,7 +49,7 @@ def createTicket(title: str = Body(default=""), group: str = Body(default=""), c
     }
 
     reply = requests.post('{}/api/v1/tickets'.format(
-        os.getenv('ZAMMAD_URL')), headers=customHeaders, json=customBody)
+        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
 
     return reply.json()
 
@@ -58,7 +58,7 @@ def createTicket(title: str = Body(default=""), group: str = Body(default=""), c
 @router.put("/{ticketId}")
 def updateTicket(ticketId: int, state: dict = Body(default={"state": ""}), Authorization: str | None = Header(default="")):
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -67,6 +67,6 @@ def updateTicket(ticketId: int, state: dict = Body(default={"state": ""}), Autho
     }
 
     reply = requests.put('{0}/api/v1/tickets/{1}'.format(
-        os.getenv('ZAMMAD_URL'), ticketId), headers=customHeaders, json=customBody)
+        os.getenv('ZAMMAD_URL_DOCKER'), ticketId), headers=customHeaders, json=customBody)
 
     return reply.json()

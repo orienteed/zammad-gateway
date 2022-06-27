@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Header, Body
 from dotenv import load_dotenv
-import requests
+from fastapi import APIRouter, Header, Body
 import os
+import requests
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ router = APIRouter()
 def getTicketThread(ticketId: int, X_On_Behalf_Of: str, internal: bool, Authorization: str | None = Header(default="")):
 
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY')),
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
@@ -23,7 +23,7 @@ def getTicketThread(ticketId: int, X_On_Behalf_Of: str, internal: bool, Authoriz
     }
 
     reply = requests.get('{0}/api/v1/ticket_articles/by_ticket/{1}'.format(
-        os.getenv('ZAMMAD_URL'), ticketId), params=customParams, headers=customHeaders)
+        os.getenv('ZAMMAD_URL_DOCKER'), ticketId), params=customParams, headers=customHeaders)
 
     return reply.json()
 
@@ -34,7 +34,7 @@ def sendComment(ticket_id: int = Body(default=""), body: str = Body(default=""),
                 type: str = Body(default=""), internal: bool = Body(default=False), sender: str = Body(default=""),
                 attachments: list = Body(default=[{"filename": "", "data": "", "mine-type": ""}]), Authorization: str | None = Header(default="")):
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_ADMIN_API_KEY'))
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER'))
     }
 
     customBody = {
@@ -50,6 +50,6 @@ def sendComment(ticket_id: int = Body(default=""), body: str = Body(default=""),
         customBody["attachments"] = attachments    
 
     reply = requests.post('{}/api/v1/ticket_articles'.format(
-        os.getenv('ZAMMAD_URL')), headers=customHeaders, json=customBody)
+        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
 
     return reply.json()
