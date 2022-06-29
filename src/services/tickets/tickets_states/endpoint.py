@@ -8,16 +8,16 @@ load_dotenv()
 
 router = APIRouter()
 
-# Get groups
+# Get states
 @router.get('/')
-def getGroups(Authorization: str | None = Header(default="")):
+def getStates(Authorization: str | None = Header(default="")):
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
-    reply = requests.get('{}/api/v1/groups'.format(os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders)
+    reply = requests.get('{}/api/v1/ticket_states'.format(os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders)
 
     response = {}
 
