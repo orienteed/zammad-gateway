@@ -16,7 +16,7 @@ def set_up():
 		allow_headers=["*"],
 	)
 
-	app.include_router(api_router)
+	app.include_router(api_router, prefix="/api/v1")
 
 	# uvicorn.run(app, host="0.0.0.0", port=8081)
 
