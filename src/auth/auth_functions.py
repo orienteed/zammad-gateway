@@ -10,14 +10,15 @@ from .graphql.validate_token import magento_validate_token
 
 load_dotenv()
 
+
 def modify_headers(request, token, data):
     print("modificando cabezeras...")
     new_header = MutableHeaders(request._headers)
-    new_header["username"]=data['email']
-    new_header["first_name"]=data['firstname']
-    new_header["last_name"]=data['lastname']
+    new_header["username"] = data['email']
+    new_header["first_name"] = data['firstname']
+    new_header["last_name"] = data['lastname']
     request._headers = new_header
-    
+
     return request
 
 
@@ -30,7 +31,6 @@ def verify_token_db(request):
 
 
 def is_expired(last_use_date):
-    
     max_last_use_date = datetime.now() - timedelta(minutes=15)
     last_use_date = datetime.strptime(last_use_date, '%Y-%m-%d %H:%M:%S.%f')
 
@@ -49,7 +49,8 @@ async def validate_token(request):
     print("validating token...")
     # token = 'Bearer eyJraWQiOiIxIiwiYWxnIjoiSFMyNTYifQ.eyJ1aWQiOjgsInV0eXBpZCI6MywiaWF0IjoxNjU2NTk1ODQwLCJleHAiOjE2NTY1OTk0NDB9.v9q3yJCnOo8VzYxxYgqpJ650QyVsdYUMLugDyQhJ9vU'
     token = request.headers["Authorization"]
-    transport = AIOHTTPTransport(url=os.getenv('MAGENTO_URL_DEV'), headers={'Authorization': token})
+    transport = AIOHTTPTransport(url=os.getenv(
+        'MAGENTO_URL_DOCKER'), headers={'Authorization': token})
     client = Client(transport=transport, fetch_schema_from_transport=True)
 
     query = magento_validate_token()
@@ -64,11 +65,7 @@ async def validate_token(request):
         if result.get('message') is not None:
             raise Exception
 
-        return modify_headers(request, token, result['customer'])    
+        return modify_headers(request, token, result['customer'])
 
     except Exception:
         return JSONResponse(content={"message": "Invalid Token"}, status_code=401)
-
-    
-    
-    
