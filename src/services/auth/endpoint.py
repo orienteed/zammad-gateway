@@ -11,7 +11,7 @@ from db.usersDAO import usersDAO
 router = APIRouter(route_class=VerifyTokenRoute)
 
 
-@router.get('/')
+@router.post('/')
 def login(Authorization: str = Header(None), request: Request = ""):   
     token = Authorization.split(" ")[1]
     username = request.headers['username']
