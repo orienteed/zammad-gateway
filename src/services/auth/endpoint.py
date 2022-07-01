@@ -12,18 +12,20 @@ router = APIRouter(route_class=VerifyTokenRoute)
 
 
 @router.get('/')
-def login(Authorization: str = Header(None), username: dict = Body(default=""), request: Request = ""):   
+def login(Authorization: str = Header(None), request: Request = ""):   
     token = Authorization.split(" ")[1]
-    username = username['username']
+    username = request.headers['username']
     
-    # user = usersDAO.get_user_data(token)
-
-    user = usersDAO.get_user_data_by_username_and_token(username, token)
+    user = usersDAO.get_user_data_by_username(username)
 
     if user is None:
         usersDAO.create_user(username, token)
-        return createCustomer(request)
-        print("usuario creado")
+        
+        createCustomer(request)
+
+        return JSONResponse({"login": "successfully"})
+
+        
 
     else:
         usersDAO.update_user_data(username, token)

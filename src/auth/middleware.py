@@ -16,7 +16,7 @@ class VerifyTokenRoute(APIRoute):
 
             if str(request.url).find("login") != -1:
                 try:                    
-                    validation_response = validate_token(token, request)
+                    validation_response = await validate_token(request)
                     if type(validation_response) == Request:
                         print('token valido')
                         return await original_route(request)
@@ -28,13 +28,14 @@ class VerifyTokenRoute(APIRoute):
                     print(original_route)
 
             else:
-                verification_response = verify_token_db(token, request)
+                verification_response = verify_token_db(request)
 
                 if verification_response:
                     print("El token ha expirado")
-                    validation_response = validate_token(token, request)
+                    validation_response = await validate_token(request)
                     if type(validation_response) == Request:
                         print('token valido')
+                        update_date(request.headers["Authorization"].split(" ")[1])
                         return await original_route(request)
                     else:
                         print("token invalido")
@@ -42,6 +43,7 @@ class VerifyTokenRoute(APIRoute):
 
                 else:
                     print("token sin expirar")
+                    update_date(request.headers["Authorization"].split(" ")[1])
                     return await original_route(request)
 
         return verify_token_middleware

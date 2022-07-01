@@ -35,7 +35,7 @@ def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: st
 @router.post('/')
 def createTicket(title: str = Body(default=""), group: str = Body(default=""), customer: str = Body(default=""),
                  article: dict = Body(
-                     default={"subject": "", "body": "", "type": "", "internal": "", "sender": ""}),
+                     default={"subject": "", "body": "", "type": "", "internal": False, "sender": ""}),
                  Authorization: str | None = Header(default="")):
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
