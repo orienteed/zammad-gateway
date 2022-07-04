@@ -10,8 +10,9 @@ router = APIRouter()
 
 # Get a ticket
 @router.get('/search')
-def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", limit: int = 10,
+def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", search: str = "", limit: int = 10,
                Authorization: str | None = Header(default="")):
+               
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
@@ -22,6 +23,7 @@ def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: st
         'page': page,
         'per_page': per_page,
         'query': query,
+        'query': search,
         'limit': limit,
     }
 

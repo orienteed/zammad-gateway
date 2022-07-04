@@ -12,9 +12,6 @@ load_dotenv()
 router = APIRouter(route_class=VerifyTokenRoute)
 
 # Get a customer
-
-
-@router.get('/')
 def getCustomer(expand: bool = False, X_On_Behalf_Of: str = None, request: Request = None):
 
     customHeaders = {
@@ -58,36 +55,3 @@ def createCustomer(request: Request):
         os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders, json=customBody)
 
     return reply.json()
-
-
-# @router.post('/')
-# def createCustomer(firstname: str = Body(default=""), lastname: str = Body(default=""),
-#                    email: str = Body(default=""), login: str = Body(default=""), organization: str = Body(default="B2BStore"),
-#                    roles: list = Body(default=["Customer"]), Authorization: str | None = Header(default="")):
-
-#     customHeaders = {
-#         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
-#         'Content-Type': 'application/json'
-#     }
-
-#     # customParams = {
-#     #     'expand': expand
-#     # }
-
-#     customBody = {
-#         "firstname": firstname,
-#         "lastname": lastname,
-#         "email": email,
-#         "login": login,
-#         "organization": organization,
-#         "roles": roles
-#     }
-
-#     print(customBody)
-
-#     reply = requests.post('{}/api/v1/users'.format(
-#         os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
-
-#     print(reply.content)
-
-#     return reply.json()

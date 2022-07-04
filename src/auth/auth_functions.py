@@ -33,7 +33,7 @@ async def verify_token_db(request):
         return await validate_token(request)
 
 
-def is_expired(last_use_date):    
+def is_expired(last_use_date):
     max_last_use_date = datetime.now() - timedelta(minutes=15)
     last_use_date = datetime.strptime(last_use_date, '%Y-%m-%d %H:%M:%S.%f')
 
@@ -46,6 +46,7 @@ def is_expired(last_use_date):
 def update_date(token):
     print("updating last use date")
     usersDAO.update_token_date(token)
+
 
 def update_token(username, token):
     print("updating token...")
@@ -67,23 +68,6 @@ async def validate_token(request):
 
     except Exception as e:
         print("invalid token...")
-        return JSONResponse(content={"message": "Invalid Token"}, status_code=401)
+        return JSONResponse(content={"message": "Invalid token"}, status_code=401)
 
     return modify_headers(request, token, result['customer'])
-
-    # try:
-
-    #     if result is not None:
-    #         if result.get('message') is not None:
-    #             raise Exception
-
-    #         return modify_headers(request, token, result['customer'])    
-    #     else:
-    #         raise Exception
-
-    # except Exception:
-    #     return JSONResponse(content={"message": "Invalid Token"}, status_code=401)
-
-    
-    
-    
