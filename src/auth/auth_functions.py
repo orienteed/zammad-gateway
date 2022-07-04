@@ -10,14 +10,15 @@ from .graphql.validate_token import magento_validate_token
 
 load_dotenv()
 
+
 def modify_headers(request, token, data):
     print("Modifying headers...")
     new_header = MutableHeaders(request._headers)
-    new_header["username"]=data['email']
-    new_header["first_name"]=data['firstname']
-    new_header["last_name"]=data['lastname']
+    new_header["username"] = data['email']
+    new_header["first_name"] = data['firstname']
+    new_header["last_name"] = data['lastname']
     request._headers = new_header
-    
+
     return request
 
 
@@ -54,7 +55,8 @@ def update_token(username, token):
 async def validate_token(request):
     print("validating token...")
     token = request.headers["Authorization"]
-    transport = AIOHTTPTransport(url=os.getenv('MAGENTO_URL_DEV'), headers={'Authorization': token})
+    transport = AIOHTTPTransport(url=os.getenv(
+        'MAGENTO_URL_DOCKER'), headers={'Authorization': token})
     client = Client(transport=transport, fetch_schema_from_transport=True)
 
     query = magento_validate_token()
