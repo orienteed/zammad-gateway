@@ -1,6 +1,6 @@
 from urllib.request import Request
 from dotenv import load_dotenv
-from fastapi import APIRouter, Header, Body
+from fastapi import APIRouter
 import os
 import requests
 from auth.middleware import VerifyTokenRoute

@@ -2,17 +2,23 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Header, Body
 import os
 import requests
+from fastapi.requests import Request
+from auth.middleware import VerifyTokenRoute
+
+from db.usersDAO import usersDAO
 
 load_dotenv()
 
-router = APIRouter()
+router = APIRouter(route_class=VerifyTokenRoute)
 
 
 # Get a ticket
 @router.get('/search')
-def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: str = "", search: str = "", limit: int = 10,
+def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, search: str = "", limit: int = 10,
                Authorization: str | None = Header(default="")):
-               
+
+    username = usersDAO.get_user_data_by_token(Authorization.split(" ")[1])[0]
+
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
@@ -22,10 +28,12 @@ def getTickets(expand: bool = False, page: int = 1, per_page: int = 8, query: st
         'expand': expand,
         'page': page,
         'per_page': per_page,
-        'query': query,
-        'query': search,
+        'query': username,
         'limit': limit,
     }
+
+    if search is not "":
+        customParams['query'] = customParams['query'] + ", " + search
 
     reply = requests.get('{}/api/v1/tickets/search'.format(
         os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
