@@ -11,7 +11,7 @@ from .graphql.validate_token import magento_validate_token
 load_dotenv()
 
 def modify_headers(request, token, data):
-    print("modificando cabezeras...")
+    print("Modifying headers...")
     new_header = MutableHeaders(request._headers)
     new_header["username"]=data['email']
     new_header["first_name"]=data['firstname']
@@ -21,16 +21,18 @@ def modify_headers(request, token, data):
     return request
 
 
-def verify_token_db(request):
+async def verify_token_db(request):
     token = request.headers["Authorization"].split(" ")[1]
     user_data = usersDAO.get_user_data_by_token(token)
     if user_data is not None:
         expired = is_expired(user_data[2])
         return expired
 
+    else:
+        return await validate_token(request)
 
-def is_expired(last_use_date):
-    
+
+def is_expired(last_use_date):    
     max_last_use_date = datetime.now() - timedelta(minutes=15)
     last_use_date = datetime.strptime(last_use_date, '%Y-%m-%d %H:%M:%S.%f')
 
@@ -41,13 +43,16 @@ def is_expired(last_use_date):
 
 
 def update_date(token):
-    print("actualizando fecha último uso")
+    print("updating last use date")
     usersDAO.update_token_date(token)
+
+def update_token(username, token):
+    print("updating token...")
+    usersDAO.update_user_data(username, token)
 
 
 async def validate_token(request):
     print("validating token...")
-    # token = 'Bearer eyJraWQiOiIxIiwiYWxnIjoiSFMyNTYifQ.eyJ1aWQiOjgsInV0eXBpZCI6MywiaWF0IjoxNjU2NTk1ODQwLCJleHAiOjE2NTY1OTk0NDB9.v9q3yJCnOo8VzYxxYgqpJ650QyVsdYUMLugDyQhJ9vU'
     token = request.headers["Authorization"]
     transport = AIOHTTPTransport(url=os.getenv('MAGENTO_URL_DEV'), headers={'Authorization': token})
     client = Client(transport=transport, fetch_schema_from_transport=True)
@@ -56,18 +61,26 @@ async def validate_token(request):
 
     try:
         result = await client.execute_async(query)
+        print(result)
 
     except Exception as e:
-        print(e)
-
-    try:
-        if result.get('message') is not None:
-            raise Exception
-
-        return modify_headers(request, token, result['customer'])    
-
-    except Exception:
+        print("invalid token...")
         return JSONResponse(content={"message": "Invalid Token"}, status_code=401)
+
+    return modify_headers(request, token, result['customer'])
+
+    # try:
+
+    #     if result is not None:
+    #         if result.get('message') is not None:
+    #             raise Exception
+
+    #         return modify_headers(request, token, result['customer'])    
+    #     else:
+    #         raise Exception
+
+    # except Exception:
+    #     return JSONResponse(content={"message": "Invalid Token"}, status_code=401)
 
     
     
