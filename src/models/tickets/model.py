@@ -1,7 +1,6 @@
 from enum import Enum
 from .tickets_states.model import State
 from pydantic import BaseModel
-from typing import Optional
 
 
 class Article(BaseModel):

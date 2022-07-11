@@ -1,6 +1,4 @@
-from sys import prefix
 from fastapi import APIRouter
-from .users import endpoint as customer_endpoint
 from .tickets import endpoint as ticket_endpoint
 from .tickets.ticket_articles import endpoint as ticket_articles_endpoint
 from .tickets.ticket_attachment import endpoint as ticket_attachment_endpoint

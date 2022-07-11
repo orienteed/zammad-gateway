@@ -9,7 +9,7 @@ from auth.middleware import VerifyTokenRoute
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
 
-# Get groups
+
 @router.get('/')
 def get_groups(authorization: str = Depends(token_auth_scheme), expand: bool = False):
 

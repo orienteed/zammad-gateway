@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Header, Body, Depends
+from fastapi import APIRouter, Depends
 import os
 import requests
 from auth.middleware import VerifyTokenRoute
