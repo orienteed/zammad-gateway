@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import Query
 from .agent import Agent
+import uuid
 
 class usersDAO:
     def get_user_data_by_token(token):
@@ -51,7 +52,8 @@ class usersDAO:
 
     def create_user(username, token):
         agent = Agent()
-        query = f"""INSERT INTO users (username, token, last_use_date) VALUES ('{username}', '{token}', '{datetime.now()}')"""
+        id = str(uuid.uuid4())
+        query = f"""INSERT INTO users (id, username, token, last_use_date) VALUES ('{id}','{username}', '{token}', '{datetime.now()}')"""
         try:
             result = agent.create(query)
             return result

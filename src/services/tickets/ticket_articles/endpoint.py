@@ -1,16 +1,17 @@
-from dotenv import load_dotenv
-from fastapi import APIRouter, Header, Body
 import os
 import requests
+from fastapi.security import HTTPBearer
+from models.tickets.ticket_articles.model import TicketComment
+from auth.middleware import VerifyTokenRoute
+from fastapi import APIRouter, Depends
 
-load_dotenv()
 
-router = APIRouter()
+router = APIRouter(route_class=VerifyTokenRoute)
+token_auth_scheme = HTTPBearer()
 
 
-# Get ticket comments
-@router.get('/by_ticket/{ticketId}')
-def getTicketThread(ticketId: int, X_On_Behalf_Of: str, internal: bool, Authorization: str | None = Header(default="")):
+@router.get('/by_ticket/{ticket_id}')
+def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_scheme), expand: bool = False):
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
@@ -18,38 +19,49 @@ def getTicketThread(ticketId: int, X_On_Behalf_Of: str, internal: bool, Authoriz
     }
 
     customParams = {
-        'X-On-Behalf-Of': X_On_Behalf_Of,
-        'internal': internal
+        'internal': False,
+        'expand': expand
     }
 
     reply = requests.get('{0}/api/v1/ticket_articles/by_ticket/{1}'.format(
-        os.getenv('ZAMMAD_URL_DOCKER'), ticketId), params=customParams, headers=customHeaders)
+        os.getenv('ZAMMAD_URL_DOCKER'), ticket_id), params=customParams, headers=customHeaders)
 
     return reply.json()
 
 
-# Send a comment into a ticket
 @router.post('/')
-def sendComment(ticket_id: int = Body(default=""), body: str = Body(default=""), content_type: str = Body(default=""),
-                type: str = Body(default=""), internal: bool = Body(default=False), sender: str = Body(default=""),
-                attachments: list = Body(default=[{"filename": "", "data": "", "mine-type": ""}]), Authorization: str | None = Header(default="")):
+def send_comment(ticket_comment: TicketComment, X_On_Behalf_Of: str, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+
     customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER'))
+        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
+        'Content-Type': 'application/json',
+        'X-On-Behalf-Of': X_On_Behalf_Of
+    }
+
+    customParams = {
+        'expand': expand
     }
 
     customBody = {
-        "ticket_id": ticket_id,
-        "body": body,
-        "content_type": content_type,
-        "type": type,
-        "internal": internal,
-        "sender": sender
+        "ticket_id": ticket_comment.ticket_id,
+        "body": ticket_comment.body,
+        "content_type": ticket_comment.content_type,
+        "type": ticket_comment.type,
+        "internal": ticket_comment.internal,
+        "sender": ticket_comment.sender
     }
 
-    if attachments[0]["data"] != "":
-        customBody["attachments"] = attachments    
+    if ticket_comment.attachments is not None:
+        attachments = []
+        count = 0
+        for attachment in ticket_comment.attachments:
+            attachments.append(attachment.dict())
+            attachments[count]['mime-type'] = attachments[count].pop('mime_type')
+            count += 1
+        
+        customBody["attachments"] = attachments
 
     reply = requests.post('{}/api/v1/ticket_articles'.format(
-        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
+        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, params=customParams, json=customBody)
 
     return reply.json()

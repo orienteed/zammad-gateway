@@ -3,7 +3,8 @@ import sqlite3
 try:
     db_connection = sqlite3.connect('src/db/users.db')
     db_create_table_query = """CREATE TABLE users (
-        username TEXT PRIMARY KEY,
+        id TEXT PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
         token TEXT NOT NULL,
         last_use_date TEXT NOT NULL);"""
 

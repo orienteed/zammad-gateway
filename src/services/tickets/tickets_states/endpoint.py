@@ -1,27 +1,33 @@
-from dotenv import load_dotenv
-from fastapi import APIRouter, Header, Response
+from fastapi import APIRouter, Response, Depends
 import os
 import requests
 import json
+from fastapi.security import HTTPBearer
+from auth.middleware import VerifyTokenRoute
 
-load_dotenv()
 
-router = APIRouter()
+router = APIRouter(route_class=VerifyTokenRoute)
+token_auth_scheme = HTTPBearer()
 
-# Get states
+
 @router.get('/')
-def getStates(Authorization: str | None = Header(default="")):
+def get_states(authorization: str = Depends(token_auth_scheme), expand: bool = False):
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json'
     }
 
-    reply = requests.get('{}/api/v1/ticket_states'.format(os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders)
+    customParams = {
+        'expand': expand
+    }
+
+    reply = requests.get('{}/api/v1/ticket_states'.format(
+        os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
 
     response = {}
 
     for group in reply.json():
         response[group['id']] = group['name']
 
-    return Response(content=json.dumps(response))
+    return Response(content=json.dumps(response), media_type='application/json')
