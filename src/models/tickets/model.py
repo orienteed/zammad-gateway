@@ -19,7 +19,7 @@ class Group(str, Enum):
 class Ticket(BaseModel):
     title: str
     group: Group = ""
-    customer: str
+    customer: str = ""
     article: Article
 
 

@@ -66,15 +66,18 @@ def get_ticket(ticket_id: int, authorization: str = Depends(token_auth_scheme), 
 
 @router.post('/')
 def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+    username = usersDAO.get_user_data_by_token(authorization.credentials)
+
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-On-Behalf-Of': username[0]
     }
 
     customBody = {
         "title": ticket.title,
         "group": ticket.group,
-        "customer": ticket.customer,
+        "customer": username[0],
         "article": ticket.article.dict()
     }
 

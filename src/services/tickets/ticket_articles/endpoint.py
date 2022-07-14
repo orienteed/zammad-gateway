@@ -1,10 +1,10 @@
-import os
-import requests
+from auth.middleware import VerifyTokenRoute
+from db.usersDAO import usersDAO
+from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer
 from models.tickets.ticket_articles.model import TicketComment
-from auth.middleware import VerifyTokenRoute
-from fastapi import APIRouter, Depends
-
+import os
+import requests
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
@@ -30,12 +30,14 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
 
 
 @router.post('/')
-def send_comment(ticket_comment: TicketComment, X_On_Behalf_Of: str, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+def send_comment(ticket_comment: TicketComment, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+
+    username = usersDAO.get_user_data_by_token(authorization.credentials)
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
         'Content-Type': 'application/json',
-        'X-On-Behalf-Of': X_On_Behalf_Of
+        'X-On-Behalf-Of': username[0]
     }
 
     customParams = {
@@ -48,7 +50,7 @@ def send_comment(ticket_comment: TicketComment, X_On_Behalf_Of: str, authorizati
         "content_type": ticket_comment.content_type,
         "type": ticket_comment.type,
         "internal": ticket_comment.internal,
-        "sender": ticket_comment.sender
+        "sender":  ticket_comment.sender
     }
 
     if ticket_comment.attachments is not None:
@@ -56,9 +58,10 @@ def send_comment(ticket_comment: TicketComment, X_On_Behalf_Of: str, authorizati
         count = 0
         for attachment in ticket_comment.attachments:
             attachments.append(attachment.dict())
-            attachments[count]['mime-type'] = attachments[count].pop('mime_type')
+            attachments[count]['mime-type'] = attachments[count].pop(
+                'mime_type')
             count += 1
-        
+
         customBody["attachments"] = attachments
 
     reply = requests.post('{}/api/v1/ticket_articles'.format(
