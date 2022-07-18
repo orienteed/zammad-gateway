@@ -81,6 +81,20 @@ def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme
         "article": ticket.article.dict()
     }
 
+    customBody['article']['sender'] = "Customer"
+    customBody['article']['internal'] = False
+
+    if ticket.article.attachments is not None:
+        attachments = []
+        count = 0
+        for attachment in ticket.article.attachments:
+            attachments.append(attachment.dict())
+            attachments[count]['mime-type'] = attachments[count].pop(
+                'mime_type')
+            count += 1
+
+        customBody["article"]["attachments"] = attachments
+
     customParams = {
         'expand': expand
     }

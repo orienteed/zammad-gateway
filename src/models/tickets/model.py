@@ -1,13 +1,18 @@
 from enum import Enum
 from .tickets_states.model import State
 from pydantic import BaseModel
+from typing import List, Optional
 
+class TicketAttachment(BaseModel):
+    filename: str
+    data: str
+    mime_type: str
 
 class Article(BaseModel):
     subject: str
     body: str
     type: str
-    internal: bool = False
+    attachments: Optional[List[TicketAttachment]] = None
 
 
 class Group(str, Enum):
@@ -19,7 +24,6 @@ class Group(str, Enum):
 class Ticket(BaseModel):
     title: str
     group: Group = ""
-    customer: str = ""
     article: Article
 
 
