@@ -11,7 +11,7 @@ class TicketAttachment(BaseModel):
 class Article(BaseModel):
     subject: str
     body: str
-    type: str
+    # type: str
     attachments: Optional[List[TicketAttachment]] = None
 
 

@@ -81,8 +81,9 @@ def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme
         "article": ticket.article.dict()
     }
 
-    customBody['article']['sender'] = "Customer"
+    customBody['article']['type'] = "chat"
     customBody['article']['internal'] = False
+    customBody['article']['sender'] = "Customer"
 
     if ticket.article.attachments is not None:
         attachments = []

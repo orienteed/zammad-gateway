@@ -43,7 +43,7 @@ async def verify_token_db(token):
 
 
 def is_expired(last_use_date):
-    max_last_use_date = datetime.now() - timedelta(minutes=1)
+    max_last_use_date = datetime.now() - timedelta(minutes=15)
     last_use_date = datetime.strptime(last_use_date, '%Y-%m-%d %H:%M:%S.%f')
 
     if max_last_use_date > last_use_date:

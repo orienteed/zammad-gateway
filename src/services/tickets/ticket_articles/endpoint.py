@@ -48,9 +48,9 @@ def send_comment(ticket_comment: TicketComment, authorization: str = Depends(tok
         "ticket_id": ticket_comment.ticket_id,
         "body": ticket_comment.body,
         "content_type": ticket_comment.content_type,
-        "type": ticket_comment.type,
-        "internal": ticket_comment.internal,
-        "sender":  ticket_comment.sender
+        "type": "chat",
+        "internal": False,
+        "sender":  "Customer"
     }
 
     if ticket_comment.attachments is not None:

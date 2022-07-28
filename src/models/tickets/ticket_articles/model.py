@@ -11,7 +11,4 @@ class TicketComment(BaseModel):
     ticket_id: int
     body: str
     content_type: str
-    type: str
-    internal: bool = False
-    sender: str = "Customer"
     attachments: List[TicketAttachment]
