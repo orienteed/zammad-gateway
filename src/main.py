@@ -18,7 +18,7 @@ def set_up():
 		allow_headers=["*"],
 	)
 
-	app.include_router(api_router, prefix="/api/v1")
+	app.include_router(api_router, prefix="/csr/api/v1")
 
 
 app = FastAPI(title=title, description=description, contact=contact, version=version, license_info=license_info, openapi_tags=tags_metadata)
