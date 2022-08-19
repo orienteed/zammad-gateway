@@ -39,10 +39,9 @@ def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = 
     if order_by is not None:
         customParams['order_by'] = order_by
 
-    queryFilters = ""
-    queryFilters = createQueryFilters(queryFilters, filters)
+    queryFilters = createQueryFilters(filters)
 
-    if queryFilters is not "":
+    if queryFilters is not None:
         customParams['query'] = customParams['query'] + " AND " + queryFilters
 
     reply = requests.get('{}/api/v1/tickets/search'.format(
@@ -50,53 +49,23 @@ def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = 
 
     return reply.json()
 
-def createGroupQueryFilters(queryFilters, filters):
-    queryFilters = "group.id:"
-    for i in range(len(filters['type'])):
-        if i == 0 and len(filters['type']) == 1:
-            queryFilters = queryFilters + str(filters['type'][i])
-        elif i == 0 and len(filters['type']) > 1:
-            queryFilters = queryFilters + "(" + str(filters['type'][i]) + " OR "
-        elif i != 0 and i != len(filters['type']) - 1:
-            queryFilters = queryFilters + str(filters['type'][i]) + " OR "
-        elif i != 0 and i == len(filters['type']) - 1:
-            queryFilters = queryFilters + str(filters['type'][i]) + ")"
-
-    return queryFilters
+def createGroupQueryFilters(filters):
+    return 'group.id:({})'.format(' OR '.join(map(str, filters['type'])))
 
 
-def createStateQueryFilters(queryFilters, filters):
-    queryFilters = "state.id:"
-    for i in range(len(filters['status'])):
-        if i == 0 and len(filters['status']) == 1:
-            queryFilters = queryFilters + str(filters['status'][i])
-        elif i == 0 and len(filters['status']) > 1:
-            queryFilters = queryFilters + "(" + str(filters['status'][i]) + " OR "
-        elif i != 0 and i != len(filters['status']) - 1:
-            queryFilters = queryFilters + str(filters['status'][i]) + " OR "
-        elif i != 0 and i == len(filters['status']) - 1:
-            queryFilters = queryFilters + str(filters['status'][i]) + ")"
-
-    return queryFilters
+def createStateQueryFilters(filters):
+    return 'state.id:({})'.format(' OR '.join(map(str, filters['status'])))
 
 
-def createQueryFilters(queryFilters, filters):
+def createQueryFilters(filters):
     if len(filters['status']) != 0 and len(filters['type']) != 0:
-        queryFilters = createGroupQueryFilters(queryFilters, filters)
-
-        queryFilters = queryFilters + " AND "
-        queryFilters = queryFilters + "state.id:"
-        
-        queryFilters = createStateQueryFilters(queryFilters, filters)
+        return createGroupQueryFilters(filters) + ' AND ' + createStateQueryFilters(filters)
 
     elif len(filters['type']) != 0 and len(filters['status']) == 0:
-        queryFilters = createGroupQueryFilters(queryFilters, filters)            
+        return createGroupQueryFilters(filters)            
 
     elif len(filters['status']) != 0 and len(filters['type']) == 0:
-        queryFilters = createStateQueryFilters(queryFilters, filters)
-
-    return queryFilters
-
+        return createStateQueryFilters(filters)
 
 
 @router.get("/{ticket_id}")
