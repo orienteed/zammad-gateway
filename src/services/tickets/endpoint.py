@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 import os
+from pydantic import Json
 import requests
 from auth.middleware import VerifyTokenRoute
 from fastapi.security import HTTPBearer
@@ -12,7 +13,7 @@ token_auth_scheme = HTTPBearer()
 
 
 @router.get('/search')
-def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = False, page: int = 1, per_page: int = 8, search: str | None = None, limit: int = 10, sort_by: str | None = None, order_by: str | None = None):
+def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = False, page: int = 1, per_page: int = 8, search: str | None = None, limit: int = 10, sort_by: str | None = None, order_by: str | None = None, filters: Json | None = None):
 
     username = usersDAO.get_user_data_by_token(authorization.credentials)
 
@@ -24,7 +25,7 @@ def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = 
     customParams = {
         'page': page,
         'per_page': per_page,
-        'query': username[0],
+        'query': "customer.email:" + username[0],
         'limit': limit,
         'expand': expand
     }
@@ -38,12 +39,64 @@ def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = 
     if order_by is not None:
         customParams['order_by'] = order_by
 
-    print(customParams)
+    queryFilters = ""
+    queryFilters = createQueryFilters(queryFilters, filters)
+
+    if queryFilters is not "":
+        customParams['query'] = customParams['query'] + " AND " + queryFilters
 
     reply = requests.get('{}/api/v1/tickets/search'.format(
         os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
 
     return reply.json()
+
+def createGroupQueryFilters(queryFilters, filters):
+    queryFilters = "group.id:"
+    for i in range(len(filters['type'])):
+        if i == 0 and len(filters['type']) == 1:
+            queryFilters = queryFilters + str(filters['type'][i])
+        elif i == 0 and len(filters['type']) > 1:
+            queryFilters = queryFilters + "(" + str(filters['type'][i]) + " OR "
+        elif i != 0 and i != len(filters['type']) - 1:
+            queryFilters = queryFilters + str(filters['type'][i]) + " OR "
+        elif i != 0 and i == len(filters['type']) - 1:
+            queryFilters = queryFilters + str(filters['type'][i]) + ")"
+
+    return queryFilters
+
+
+def createStateQueryFilters(queryFilters, filters):
+    queryFilters = "state.id:"
+    for i in range(len(filters['status'])):
+        if i == 0 and len(filters['status']) == 1:
+            queryFilters = queryFilters + str(filters['status'][i])
+        elif i == 0 and len(filters['status']) > 1:
+            queryFilters = queryFilters + "(" + str(filters['status'][i]) + " OR "
+        elif i != 0 and i != len(filters['status']) - 1:
+            queryFilters = queryFilters + str(filters['status'][i]) + " OR "
+        elif i != 0 and i == len(filters['status']) - 1:
+            queryFilters = queryFilters + str(filters['status'][i]) + ")"
+
+    return queryFilters
+
+
+def createQueryFilters(queryFilters, filters):
+    if len(filters['status']) != 0 and len(filters['type']) != 0:
+        queryFilters = createGroupQueryFilters(queryFilters, filters)
+
+        queryFilters = queryFilters + " AND "
+        queryFilters = queryFilters + "state.id:"
+        
+        queryFilters = createStateQueryFilters(queryFilters, filters)
+
+    elif len(filters['type']) != 0 and len(filters['status']) == 0:
+        queryFilters = createGroupQueryFilters(queryFilters, filters)            
+
+    elif len(filters['status']) != 0 and len(filters['type']) == 0:
+        queryFilters = createStateQueryFilters(queryFilters, filters)
+
+    return queryFilters
+
 
 
 @router.get("/{ticket_id}")
