@@ -28,6 +28,7 @@ def get_states(authorization: str = Depends(token_auth_scheme), expand: bool = F
     response = {}
 
     for group in reply.json():
-        response[group['id']] = group['name']
+        if group['active'] == True:
+            response[group['id']] = group['name']
 
     return Response(content=json.dumps(response), media_type='application/json')
