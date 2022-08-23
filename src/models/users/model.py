@@ -1,12 +1,13 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+import os
 
 
 class Customer(BaseModel):
     username: EmailStr
     firstname: str
     lastname: str
-    organization: str = "B2BStore"
+    organization: str = os.getenv('ORGANIZATION_NAME_DOCKER')
     roles: str = "Customer"
 
 
