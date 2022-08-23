@@ -52,7 +52,16 @@ class usersDAO:
 
     def create_user(username, token, zammad_id):
         agent = Agent()
-        query = f"""INSERT INTO users (id, username, token, last_use_date) VALUES ('{zammad_id}','{username}', '{token}', '{datetime.now()}')"""
+        query = f"INSERT INTO users (id, username, token, last_use_date) VALUES ('{zammad_id}','{username}', '{token}', '{datetime.now()}')"
+        try:
+            result = agent.create(query)
+            return result
+        except Exception as e:
+            print(e)
+
+    def remove_token_by_token(token):
+        agent = Agent()
+        query = f"UPDATE users SET token = '' WHERE token = '{token}'"
         try:
             result = agent.create(query)
             return result

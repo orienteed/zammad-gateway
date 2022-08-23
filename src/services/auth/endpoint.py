@@ -1,20 +1,18 @@
-from fastapi import APIRouter, Depends
-from auth.middleware import VerifyTokenRoute
 from ..users.endpoint import createCustomer, getCustomer
+from auth.middleware import VerifyTokenRoute
+from db.usersDAO import usersDAO
+from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
-
-from db.usersDAO import usersDAO
 from models.users.model import Customer
 import json
 
 router = APIRouter(route_class=VerifyTokenRoute)
-
 token_auth_scheme = HTTPBearer()
 
 
-@router.post('/')
+@router.post('/login')
 async def login(authorization: str = Depends(token_auth_scheme), request: Request = None):
 
     customer = json.loads(request.headers["customer"])
@@ -35,3 +33,10 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
     else:
         usersDAO.update_user_data(username, token)
         return JSONResponse({"message": "Login successfully"})
+
+
+@router.post('/logout')
+async def logout(authorization: str = Depends(token_auth_scheme)):
+    token = authorization.credentials
+    usersDAO.remove_token_by_token(token)
+    return JSONResponse({"message": "Logout successfully"})

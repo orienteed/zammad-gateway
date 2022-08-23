@@ -10,7 +10,7 @@ from .users import endpoint as users_endpoint
 
 api_router = APIRouter()
 
-api_router.include_router(auth_endpoint.router, prefix='/login', tags=["Authentication"])
+api_router.include_router(auth_endpoint.router, prefix='/auth', tags=["Authentication"])
 api_router.include_router(users_endpoint.router, prefix='/users', tags=["Users"])
 api_router.include_router(group_endpoint.router, prefix="/groups", tags=["Groups"])
 api_router.include_router(priority_endpoint.router, prefix="/ticket_priorities", tags=["Priorities"])
