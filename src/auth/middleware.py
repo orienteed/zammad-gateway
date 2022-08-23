@@ -32,9 +32,9 @@ class VerifyTokenRoute(APIRoute):
         return verify_token_middleware
 
 
-async def process_validate_token(request, token, original_route, update_token_date = False):
+async def process_validate_token(request, token, original_route, update_token_date=False):
     validation_response = await validate_token(token)
-    
+
     if type(validation_response) == Customer:
         print('Valid token')
         if update_token_date:
@@ -44,21 +44,21 @@ async def process_validate_token(request, token, original_route, update_token_da
         else:
             modify_request = modify_headers(request, validation_response)
             return await original_route(modify_request)
-        
+
     else:
         print("Invalid token")
         return validation_response
 
 
 async def process_token_exist_db(request, token, token_is_expired, original_route):
-        if token_is_expired:
-            print("Maximum time without token validation")
-            return await process_validate_token(request, token, original_route, update_token_date = True)
+    if token_is_expired:
+        print("Maximum time without token validation")
+        return await process_validate_token(request, token, original_route, update_token_date=True)
 
-        else:
-            print("Unexpired token")
-            update_date(token)
-            return await original_route(request)
+    else:
+        print("Unexpired token")
+        update_date(token)
+        return await original_route(request)
 
 
 async def process_token_not_exist_db(request, token, verify_token_response, original_route):
@@ -66,7 +66,7 @@ async def process_token_not_exist_db(request, token, verify_token_response, orig
         print('the token is not in the db but it is valid')
         update_token(verify_token_response.username, token)
         return await original_route(request)
-    
+
     else:
         print("Invalid token")
         return JSONResponse(content={"message": "Invalid token"}, status_code=401)

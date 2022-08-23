@@ -3,10 +3,11 @@ from fastapi import Query
 from .agent import Agent
 import uuid
 
+
 class usersDAO:
     def get_user_data_by_token(token):
         agent = Agent()
-        query = f"SELECT username,token, last_use_date FROM users WHERE token = '{token}'"
+        query = f"SELECT username, token, last_use_date, id FROM users WHERE token = '{token}'"
         try:
             result = agent.read(query)
             return result
@@ -31,7 +32,6 @@ class usersDAO:
         except Exception as e:
             print(e)
 
-    
     def update_user_data(username, token):
         agent = Agent()
         query = f"UPDATE users SET token = '{token}', last_use_date = '{datetime.now()}' WHERE username = '{username}'"
@@ -50,10 +50,9 @@ class usersDAO:
         except Exception as e:
             print(e)
 
-    def create_user(username, token):
+    def create_user(username, token, zammad_id):
         agent = Agent()
-        id = str(uuid.uuid4())
-        query = f"""INSERT INTO users (id, username, token, last_use_date) VALUES ('{id}','{username}', '{token}', '{datetime.now()}')"""
+        query = f"""INSERT INTO users (id, username, token, last_use_date) VALUES ('{zammad_id}','{username}', '{token}', '{datetime.now()}')"""
         try:
             result = agent.create(query)
             return result
