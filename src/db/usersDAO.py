@@ -63,7 +63,7 @@ class usersDAO:
         agent = Agent()
         query = f"UPDATE users SET token = '' WHERE token = '{token}'"
         try:
-            result = agent.create(query)
+            result = agent.update(query)
             return result
         except Exception as e:
             print(e)
