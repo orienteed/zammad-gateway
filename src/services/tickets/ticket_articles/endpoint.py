@@ -1,3 +1,4 @@
+import json
 from auth.middleware import VerifyTokenRoute
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
@@ -19,14 +20,21 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
     }
 
     customParams = {
-        'internal': False,
-        'expand': expand
+        'expand': expand,
+        'query': "article.internal: false"
     }
 
     reply = requests.get('{0}/api/v1/ticket_articles/by_ticket/{1}'.format(
         os.getenv('ZAMMAD_URL_DOCKER'), ticket_id), params=customParams, headers=customHeaders)
 
-    return reply.json()
+    external_articles = []
+
+    for article in reply.json():
+        if article['internal'] is False:
+            external_articles.append(article)
+
+
+    return external_articles
 
 
 @router.post('/')
