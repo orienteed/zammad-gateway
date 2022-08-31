@@ -1,7 +1,7 @@
-import json
 from auth.middleware import VerifyTokenRoute
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
 from models.tickets.ticket_articles.model import TicketComment
 import os
@@ -20,8 +20,7 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
     }
 
     customParams = {
-        'expand': expand,
-        'query': "article.internal: false"
+        'expand': expand
     }
 
     reply = requests.get('{0}/api/v1/ticket_articles/by_ticket/{1}'.format(
@@ -32,7 +31,6 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
     for article in reply.json():
         if article['internal'] is False:
             external_articles.append(article)
-
 
     return external_articles
 
@@ -72,7 +70,10 @@ def send_comment(ticket_comment: TicketComment, authorization: str = Depends(tok
 
         customBody["attachments"] = attachments
 
-    reply = requests.post('{}/api/v1/ticket_articles'.format(
-        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, params=customParams, json=customBody)
+    if not ticket_comment.ticket_closed:
+        reply = requests.post('{}/api/v1/ticket_articles'.format(
+            os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, params=customParams, json=customBody)
+    else:
+        return JSONResponse({"message": "Reopen the ticket to send a new message"})
 
     return reply.json()
