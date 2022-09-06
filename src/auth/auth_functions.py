@@ -1,32 +1,27 @@
-from calendar import c
-import os
-from wsgiref import headers
-from fastapi.requests import Request
-from urllib.request import Request
-from dotenv import load_dotenv
-from fastapi.responses import JSONResponse
-import requests
-from db.usersDAO import usersDAO
-from datetime import datetime, timedelta
-from starlette.datastructures import MutableHeaders
-from gql import gql, Client
-from gql.transport.aiohttp import AIOHTTPTransport
-
-from models.users.model import Customer
 from .graphql.validate_token import magento_validate_token
+from calendar import c
+from datetime import datetime, timedelta
+from db.usersDAO import usersDAO
+from dotenv import load_dotenv
+from fastapi.requests import Request
+from fastapi.responses import JSONResponse
+from gql import Client
+from gql.transport.aiohttp import AIOHTTPTransport
+from models.users.model import Customer
+from starlette.datastructures import MutableHeaders
 import json
+import os
 
 load_dotenv()
 
 
 def modify_headers(request: Request, customer: Customer):
     print("Modifying headers...")
-    
+
     new_header = MutableHeaders(request._headers)
     new_header['customer'] = json.dumps(customer.dict())
     request._headers = new_header
-    # request._body = json.dumps({"authorization": token, "username": data['email'], "firstname": data['firstname'], "lastname": data['lastname']})
-    
+
     print("headers modified")
 
     return request
@@ -78,7 +73,8 @@ async def validate_token(token):
         print(ex)
         return JSONResponse(content={"message": "Invalid token"}, status_code=401)
 
-    customer_data['customer']['username'] = customer_data['customer'].pop('email')
+    customer_data['customer']['username'] = customer_data['customer'].pop(
+        'email')
     customer = Customer(**customer_data['customer'])
 
     return customer

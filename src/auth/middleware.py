@@ -12,8 +12,8 @@ class VerifyTokenRoute(APIRoute):
         original_route = super().get_route_handler()
 
         async def verify_token_middleware(request: Request):
-            if request.headers.get("Authorization") != None:
-                token = request.headers["Authorization"].split(" ")[1]
+            if request.headers.get("csr-authorization") != None:
+                token = request.headers.get("csr-authorization")
                 if str(request.url).find("login") != -1:
                     return await process_validate_token(request, token, original_route)
 

@@ -18,7 +18,7 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
     customer = json.loads(request.headers["customer"])
     customer = Customer(**customer)
 
-    token = authorization.credentials
+    token = request.headers.get("csr-authorization")
     username = customer.username
 
     user = usersDAO.get_user_data_by_username(username)
@@ -36,7 +36,7 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
 
 
 @router.post('/logout')
-async def logout(authorization: str = Depends(token_auth_scheme)):
-    token = authorization.credentials
+async def logout(authorization: str = Depends(token_auth_scheme), request: Request = None):
+    token = request.headers.get("csr-authorization")
     usersDAO.remove_token_by_token(token)
     return JSONResponse({"message": "Logout successfully"})

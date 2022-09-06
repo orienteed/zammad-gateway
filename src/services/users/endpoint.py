@@ -1,6 +1,7 @@
 from auth.middleware import VerifyTokenRoute
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
+from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
@@ -56,8 +57,10 @@ def getCustomer(customer: Customer):
 
 
 @router.put('/')
-def modify_customer(authorization: str = Depends(token_auth_scheme), customer: Customer_update = None):
-    user_data = usersDAO.get_user_data_by_token(authorization.credentials)
+def modify_customer(authorization: str = Depends(token_auth_scheme), customer: Customer_update = None, request: Request = None):
+    user_data = usersDAO.get_user_data_by_token(
+        request.headers.get("csr-authorization"))
+
     print(user_data[3])
 
     customHeaders = {

@@ -1,6 +1,7 @@
 from auth.middleware import VerifyTokenRoute
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
+from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
 from models.tickets.ticket_articles.model import TicketComment
@@ -36,9 +37,10 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
 
 
 @router.post('/')
-def send_comment(ticket_comment: TicketComment, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+def send_comment(ticket_comment: TicketComment, authorization: str = Depends(token_auth_scheme), expand: bool = False, request: Request = None):
 
-    username = usersDAO.get_user_data_by_token(authorization.credentials)
+    username = usersDAO.get_user_data_by_token(
+        request.headers.get("csr-authorization"))
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),

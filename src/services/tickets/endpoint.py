@@ -1,21 +1,23 @@
-from fastapi import APIRouter, Depends
-import os
-from pydantic import Json
-import requests
 from auth.middleware import VerifyTokenRoute
-from fastapi.security import HTTPBearer
 from db.usersDAO import usersDAO
+from fastapi import APIRouter, Depends
+from fastapi.requests import Request
+from fastapi.security import HTTPBearer
 from models.tickets.model import Ticket
 from models.tickets.model import Ticket_update
+from pydantic import Json
+import os
+import requests
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
 
 
 @router.get('/search')
-def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = False, page: int = 1, per_page: int = 8, search: str | None = None, limit: int = 10, sort_by: str | None = None, order_by: str | None = None, filters: Json | None = None):
+def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = False, page: int = 1, per_page: int = 8, search: str | None = None, limit: int = 10, sort_by: str | None = None, order_by: str | None = None, filters: Json | None = None, request: Request = None):
 
-    username = usersDAO.get_user_data_by_token(authorization.credentials)
+    username = usersDAO.get_user_data_by_token(
+        request.headers.get("csr-authorization"))
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
@@ -49,6 +51,7 @@ def get_tickets(authorization: str = Depends(token_auth_scheme), expand: bool = 
 
     return reply.json()
 
+
 def createGroupQueryFilters(filters):
     return 'group.id:({})'.format(' OR '.join(map(str, filters['type'])))
 
@@ -62,7 +65,7 @@ def createQueryFilters(filters):
         return createGroupQueryFilters(filters) + ' AND ' + createStateQueryFilters(filters)
 
     elif len(filters['type']) != 0 and len(filters['status']) == 0:
-        return createGroupQueryFilters(filters)            
+        return createGroupQueryFilters(filters)
 
     elif len(filters['status']) != 0 and len(filters['type']) == 0:
         return createStateQueryFilters(filters)
@@ -87,8 +90,9 @@ def get_ticket(ticket_id: int, authorization: str = Depends(token_auth_scheme), 
 
 
 @router.post('/')
-def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme), expand: bool = False):
-    username = usersDAO.get_user_data_by_token(authorization.credentials)
+def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme), expand: bool = False, request: Request = None):
+    username = usersDAO.get_user_data_by_token(
+        request.headers.get("csr-authorization"))
 
     customHeaders = {
         'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
