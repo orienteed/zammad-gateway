@@ -11,6 +11,7 @@ from models.users.model import Customer
 from starlette.datastructures import MutableHeaders
 import json
 import os
+import jwt
 
 load_dotenv()
 
@@ -78,3 +79,22 @@ async def validate_token(token):
     customer = Customer(**customer_data['customer'])
 
     return customer
+
+
+def generate_chatbot_token(email):
+
+    payload = {
+        'sub': 'a3e036a3-33d6-4ab6-b4c9-6b1b3db8bb01',
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(seconds=600),
+        'attributes': {"email": email}
+    }
+
+    header = {
+        'typ': "JWT",
+        'alg': 'HS256'
+    }
+
+    encoded_token = jwt.encode((payload), os.getenv('CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
+
+    return encoded_token

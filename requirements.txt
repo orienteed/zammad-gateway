@@ -4,3 +4,4 @@ requests==2.28.0
 uvicorn==0.17.6
 gql[all]
 pydantic[email]
+PyJWT==2.4.0
