@@ -44,7 +44,7 @@ async def logout(authorization: str = Depends(token_auth_scheme), request: Reque
 
 
 @router.post('/chatbot')
-async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: list = Body(default = 'en-US')):
+async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: dict = Body(default = 'en-US')):
     token = request.headers.get("csr-authorization")
     user = usersDAO.get_user_data_by_token(token)
 
