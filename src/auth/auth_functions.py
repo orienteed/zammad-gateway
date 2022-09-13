@@ -95,6 +95,7 @@ def generate_chatbot_token(email, token, locale):
         'alg': 'HS256'
     }
 
-    encoded_token = jwt.encode((payload), os.getenv('CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
+    encoded_token = jwt.encode((payload), os.getenv(
+        'CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
 
     return encoded_token

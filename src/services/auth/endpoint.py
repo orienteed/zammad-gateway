@@ -47,7 +47,7 @@ async def logout(authorization: str = Depends(token_auth_scheme), request: Reque
 async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: list = Body(default = 'en-US')):
     token = request.headers.get("csr-authorization")
     user = usersDAO.get_user_data_by_token(token)
-    
+
     if user is not None:
         return generate_chatbot_token(user[0], token, locale)
     else:
