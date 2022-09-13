@@ -43,12 +43,12 @@ async def logout(authorization: str = Depends(token_auth_scheme), request: Reque
     return JSONResponse({"message": "Logout successfully"})
 
 
-@router.get('/chatbot')
-async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None):
+@router.post('/chatbot')
+async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), locale: str = '', request: Request = None):
     token = request.headers.get("csr-authorization")
     user = usersDAO.get_user_data_by_token(token)
     
     if user is not None:
-        return generate_chatbot_token(user[0], token)
+        return generate_chatbot_token(user[0], token, locale)
     else:
         return JSONResponse({"message": "Unauthorized"}, status_code=401)

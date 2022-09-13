@@ -81,13 +81,13 @@ async def validate_token(token):
     return customer
 
 
-def generate_chatbot_token(email, token):
+def generate_chatbot_token(email, token, locale):
 
     payload = {
         'sub': 'a3e036a3-33d6-4ab6-b4c9-6b1b3db8bb01',
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(seconds=500),
-        'attributes': {"email": email, "magento_token": token}
+        'attributes': {"email": email, "magento_token": token, "locale": locale}
     }
 
     header = {
@@ -95,6 +95,7 @@ def generate_chatbot_token(email, token):
         'alg': 'HS256'
     }
 
-    encoded_token = jwt.encode((payload), os.getenv('CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
+    encoded_token = jwt.encode((payload), os.getenv(
+        'CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
 
     return encoded_token
