@@ -2,7 +2,7 @@ from ..users.endpoint import createCustomer, getCustomer
 from auth.auth_functions import generate_chatbot_token
 from auth.middleware import VerifyTokenRoute
 from db.usersDAO import usersDAO
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
@@ -43,12 +43,12 @@ async def logout(authorization: str = Depends(token_auth_scheme), request: Reque
     return JSONResponse({"message": "Logout successfully"})
 
 
-@router.get('/chatbot')
-async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None):
+@router.post('/chatbot')
+async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: list = Body(default = 'en-US')):
     token = request.headers.get("csr-authorization")
     user = usersDAO.get_user_data_by_token(token)
     
     if user is not None:
-        return generate_chatbot_token(user[0], token)
+        return generate_chatbot_token(user[0], token, locale)
     else:
         return JSONResponse({"message": "Unauthorized"}, status_code=401)
