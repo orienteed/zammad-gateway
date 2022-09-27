@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from metadata.api_metadata import title, description, contact, version, license_info
 from metadata.tags_metadata import tags_metadata
 from services.router import api_router
+from services.tickets.tickets_states.endpoint import update_states
 import os
 import requests
 
@@ -21,6 +22,10 @@ def initialTasks():
 
     requests.post('{}/api/v1/organizations'.format(
         os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
+
+    
+    # update active states
+    update_states()
 
 
 def set_up():
