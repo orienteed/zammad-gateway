@@ -11,19 +11,12 @@ import requests
 
 def initialTasks():
     # Create the organization
-    customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
-        'Content-Type': 'application/json'
-    }
+    customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
-    customBody = {
-        'name': os.getenv('ORGANIZATION_NAME_DOCKER')
-    }
+    customBody = {"name": os.getenv("ORGANIZATION_NAME_DOCKER")}
 
-    requests.post('{}/api/v1/organizations'.format(
-        os.getenv('ZAMMAD_URL_DOCKER')), headers=customHeaders, json=customBody)
+    requests.post("{}/api/v1/organizations".format(os.getenv("ZAMMAD_URL_DOCKER")), headers=customHeaders, json=customBody)
 
-    
     # update active states
     update_states()
 
@@ -44,6 +37,5 @@ def set_up():
     app.include_router(api_router, prefix="/csr/api/v1")
 
 
-app = FastAPI(title=title, description=description, contact=contact,
-              version=version, license_info=license_info, openapi_tags=tags_metadata)
+app = FastAPI(title=title, description=description, contact=contact, version=version, license_info=license_info, openapi_tags=tags_metadata)
 set_up()

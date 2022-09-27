@@ -38,10 +38,7 @@ You will be able to:
 """
 
 version = "2.0.0"
-contact = {
-    "name": "Orienteed",
-    "url": "https://www.orienteed.com"
-}
+contact = {"name": "Orienteed", "url": "https://www.orienteed.com"}
 license_info = {
     "name": "Apache 2.0",
     "url": "https://www.apache.org/licenses/LICENSE-2.0.html",

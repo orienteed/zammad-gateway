@@ -7,6 +7,7 @@ class TicketAttachment(BaseModel):
     data: str
     mime_type: str
 
+
 class TicketComment(BaseModel):
     ticket_id: int
     ticket_closed: bool

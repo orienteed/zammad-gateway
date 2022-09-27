@@ -7,7 +7,7 @@ class Customer(BaseModel):
     username: EmailStr
     firstname: str
     lastname: str
-    organization: str = os.getenv('ORGANIZATION_NAME_DOCKER')
+    organization: str = os.getenv("ORGANIZATION_NAME_DOCKER")
     roles: str = "Customer"
 
 

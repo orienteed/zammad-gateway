@@ -11,46 +11,35 @@ router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
 
 
-@router.get('/')
+@router.get("/")
 def get_states(authorization: str = Depends(token_auth_scheme), expand: bool = False):
 
-    customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
-        'Content-Type': 'application/json'
-    }
+    customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
-    customParams = {
-        'expand': expand
-    }
+    customParams = {"expand": expand}
 
-    reply = requests.get('{}/api/v1/ticket_states'.format(
-        os.getenv('ZAMMAD_URL_DOCKER')), params=customParams, headers=customHeaders)
+    reply = requests.get("{}/api/v1/ticket_states".format(os.getenv("ZAMMAD_URL_DOCKER")), params=customParams, headers=customHeaders)
 
     response = {}
 
     for group in reply.json():
-        if group['active'] == True:
-            response[group['id']] = group['name']
+        if group["active"] == True:
+            response[group["id"]] = group["name"]
 
-    return Response(content=json.dumps(response), media_type='application/json')
+    return Response(content=json.dumps(response), media_type="application/json")
 
 
 def update_states():
 
-    activeStates = ['new', 'open', 'closed']
+    activeStates = ["new", "open", "closed"]
     states = json.loads(get_states().body.decode())
 
+    customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
-    customHeaders = {
-        'Authorization': 'Token token={}'.format(os.getenv('ZAMMAD_API_KEY_DOCKER')),
-        'Content-Type': 'application/json'
-    }
-
-    customBody = {
-        'active': False
-    }
+    customBody = {"active": False}
 
     for state_id in states:
         if states[state_id] not in activeStates:
-            reply = requests.put('{}/api/v1/ticket_states/{}'.format(
-        os.getenv('ZAMMAD_URL_DOCKER'), state_id), headers=customHeaders, json=customBody)
+            reply = requests.put(
+                "{}/api/v1/ticket_states/{}".format(os.getenv("ZAMMAD_URL_DOCKER"), state_id), headers=customHeaders, json=customBody
+            )

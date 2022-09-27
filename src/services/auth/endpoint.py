@@ -13,7 +13,7 @@ router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
 
 
-@router.post('/login')
+@router.post("/login")
 async def login(authorization: str = Depends(token_auth_scheme), request: Request = None):
 
     customer = json.loads(request.headers["customer"])
@@ -26,29 +26,29 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
 
     if user is None:
         zammadCustomer = createCustomer(customer)
-        if 'error' in zammadCustomer:
+        if "error" in zammadCustomer:
             zammadCustomer = getCustomer(customer)
 
-        usersDAO.create_user(username, token, zammadCustomer['id'])
+        usersDAO.create_user(username, token, zammadCustomer["id"])
         return JSONResponse({"message": "Login successfully"})
     else:
         usersDAO.update_user_data(username, token)
         return JSONResponse({"message": "Login successfully"})
 
 
-@router.post('/logout')
+@router.post("/logout")
 async def logout(authorization: str = Depends(token_auth_scheme), request: Request = None):
     token = request.headers.get("csr-authorization")
     usersDAO.remove_token_by_token(token)
     return JSONResponse({"message": "Logout successfully"})
 
 
-@router.post('/chatbot')
-async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: dict = Body(default = 'en-US')):
+@router.post("/chatbot")
+async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), request: Request = None, locale: dict = Body(default="en-US")):
     token = request.headers.get("csr-authorization")
     user = usersDAO.get_user_data_by_token(token)
 
     if user is not None:
-        return generate_chatbot_token(user[0], token, locale['locale'])
+        return generate_chatbot_token(user[0], token, locale["locale"])
     else:
         return JSONResponse({"message": "Unauthorized"}, status_code=401)

@@ -1,8 +1,5 @@
 tags_metadata = [
-    {
-        "name": "Authentication",
-        "description": "Manage authentication. Authentication with Bearer token."
-    },
+    {"name": "Authentication", "description": "Manage authentication. Authentication with Bearer token."},
     {
         "name": "Tickets",
         "description": "Manage tickets.",
@@ -50,5 +47,5 @@ tags_metadata = [
             "description": "Priorities external docs",
             "url": "https://docs.zammad.org/en/latest/api/ticket/priorities.html",
         },
-    }
+    },
 ]

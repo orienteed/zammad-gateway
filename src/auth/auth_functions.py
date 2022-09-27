@@ -20,7 +20,7 @@ def modify_headers(request: Request, customer: Customer):
     print("Modifying headers...")
 
     new_header = MutableHeaders(request._headers)
-    new_header['customer'] = json.dumps(customer.dict())
+    new_header["customer"] = json.dumps(customer.dict())
     request._headers = new_header
 
     print("headers modified")
@@ -40,7 +40,7 @@ async def verify_token_db(token):
 
 def is_expired(last_use_date):
     max_last_use_date = datetime.now() - timedelta(minutes=15)
-    last_use_date = datetime.strptime(last_use_date, '%Y-%m-%d %H:%M:%S.%f')
+    last_use_date = datetime.strptime(last_use_date, "%Y-%m-%d %H:%M:%S.%f")
 
     if max_last_use_date > last_use_date:
         return True
@@ -60,8 +60,7 @@ def update_token(username, token):
 
 async def validate_token(token):
     print("validating token...")
-    transport = AIOHTTPTransport(url=os.getenv(
-        'MAGENTO_URL_DOCKER'), headers={'Authorization': 'Bearer ' + token})
+    transport = AIOHTTPTransport(url=os.getenv("MAGENTO_URL_DOCKER"), headers={"Authorization": "Bearer " + token})
     client = Client(transport=transport, fetch_schema_from_transport=True)
 
     query = magento_validate_token()
@@ -74,9 +73,8 @@ async def validate_token(token):
         print(ex)
         return JSONResponse(content={"message": "Invalid token"}, status_code=401)
 
-    customer_data['customer']['username'] = customer_data['customer'].pop(
-        'email')
-    customer = Customer(**customer_data['customer'])
+    customer_data["customer"]["username"] = customer_data["customer"].pop("email")
+    customer = Customer(**customer_data["customer"])
 
     return customer
 
@@ -84,18 +82,14 @@ async def validate_token(token):
 def generate_chatbot_token(email, token, locale):
 
     payload = {
-        'sub': 'a3e036a3-33d6-4ab6-b4c9-6b1b3db8bb01',
-        'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(seconds=500),
-        'attributes': {"email": email, "magento_token": token, "locale": locale}
+        "sub": "a3e036a3-33d6-4ab6-b4c9-6b1b3db8bb01",
+        "iat": datetime.utcnow(),
+        "exp": datetime.utcnow() + timedelta(seconds=500),
+        "attributes": {"email": email, "magento_token": token, "locale": locale},
     }
 
-    header = {
-        'typ': "JWT",
-        'alg': 'HS256'
-    }
+    header = {"typ": "JWT", "alg": "HS256"}
 
-    encoded_token = jwt.encode((payload), os.getenv(
-        'CHATBOT_SECURITY_KEY_DOCKER'), algorithm="HS256", headers=header)
+    encoded_token = jwt.encode((payload), os.getenv("CHATBOT_SECURITY_KEY_DOCKER"), algorithm="HS256", headers=header)
 
     return encoded_token

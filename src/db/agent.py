@@ -1,10 +1,9 @@
 import sqlite3
 
 
-class Agent():
-
+class Agent:
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(Agent, cls).__new__(cls)
         return cls.instance
 
@@ -13,8 +12,7 @@ class Agent():
         self.db_cursor = None
 
     def __conect__(self):
-        self.db_connection = sqlite3.connect(
-            'db/users.db', check_same_thread=False)
+        self.db_connection = sqlite3.connect("db/users.db", check_same_thread=False)
         self.db_cursor = self.db_connection.cursor()
 
     def create(self, query):

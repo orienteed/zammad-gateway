@@ -36,7 +36,7 @@ async def process_validate_token(request, token, original_route, update_token_da
     validation_response = await validate_token(token)
 
     if type(validation_response) == Customer:
-        print('Valid token')
+        print("Valid token")
         if update_token_date:
             update_date(token)
             print("Token date updated")
@@ -63,7 +63,7 @@ async def process_token_exist_db(request, token, token_is_expired, original_rout
 
 async def process_token_not_exist_db(request, token, verify_token_response, original_route):
     if type(verify_token_response) == Customer:
-        print('the token is not in the db but it is valid')
+        print("the token is not in the db but it is valid")
         update_token(verify_token_response.username, token)
         return await original_route(request)
 
