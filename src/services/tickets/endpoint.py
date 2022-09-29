@@ -8,6 +8,8 @@ from models.tickets.model import Ticket_update
 from pydantic import Json
 import os
 import requests
+from logs.setup import logger
+from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
@@ -26,6 +28,20 @@ def get_tickets(
     filters: Json | None = None,
     request: Request = None,
 ):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Fetching tickets..."
+    )
 
     username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
@@ -48,6 +64,20 @@ def get_tickets(
         customParams["query"] = customParams["query"] + " AND " + queryFilters
 
     reply = requests.get("{}/api/v1/tickets/search".format(os.getenv("ZAMMAD_URL_DOCKER")), params=customParams, headers=customHeaders)
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Tickets fetched"
+    )
 
     return reply.json()
 
@@ -72,7 +102,21 @@ def createQueryFilters(filters):
 
 
 @router.get("/{ticket_id}")
-def get_ticket(ticket_id: int, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+def get_ticket(ticket_id: int, request: Request, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Fetching ticket..."
+    )
 
     customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
@@ -82,11 +126,40 @@ def get_ticket(ticket_id: int, authorization: str = Depends(token_auth_scheme), 
         "{}/api/v1/tickets/{}".format(os.getenv("ZAMMAD_URL_DOCKER"), ticket_id), params=customParams, headers=customHeaders
     )
 
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Ticket fetched"
+    )
+
     return reply.json()
 
 
 @router.post("/")
-def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme), expand: bool = False, request: Request = None):
+def create_ticket(ticket: Ticket, request: Request, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Creating ticket..."
+    )
+
     username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
     customHeaders = {
@@ -117,11 +190,42 @@ def create_ticket(ticket: Ticket, authorization: str = Depends(token_auth_scheme
         "{}/api/v1/tickets".format(os.getenv("ZAMMAD_URL_DOCKER")), params=customParams, headers=customHeaders, json=customBody
     )
 
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Ticket created"
+    )
+
     return reply.json()
 
 
 @router.put("/{ticketId}")
-def update_ticket(ticketId: int, ticket_update: Ticket_update, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+def update_ticket(
+    ticketId: int, ticket_update: Ticket_update, request: Request, authorization: str = Depends(token_auth_scheme), expand: bool = False
+):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Updating ticket..."
+    )
+
     customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
     customBody = {"state": ticket_update.state.replace("_", " ")}
@@ -133,6 +237,20 @@ def update_ticket(ticketId: int, ticket_update: Ticket_update, authorization: st
         params=customParams,
         headers=customHeaders,
         json=customBody,
+    )
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Ticket updated"
     )
 
     return reply.json()

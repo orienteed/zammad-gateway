@@ -5,17 +5,16 @@ from metadata.api_metadata import title, description, contact, version, license_
 from metadata.tags_metadata import tags_metadata
 from services.router import api_router
 from services.tickets.tickets_states.endpoint import update_states
+from services.organizations.endpoint import update_organization
+from logs.setup import logger
 import os
 import requests
 
 
 def initialTasks():
+
     # Create the organization
-    customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
-
-    customBody = {"name": os.getenv("ORGANIZATION_NAME_DOCKER")}
-
-    requests.post("{}/api/v1/organizations".format(os.getenv("ZAMMAD_URL_DOCKER")), headers=customHeaders, json=customBody)
+    update_organization()
 
     # update active states
     update_states()

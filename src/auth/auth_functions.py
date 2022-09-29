@@ -12,30 +12,55 @@ from starlette.datastructures import MutableHeaders
 import json
 import os
 import jwt
+from logs.setup import logger
 
 load_dotenv()
 
 
 def modify_headers(request: Request, customer: Customer):
-    print("Modifying headers...")
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Modifying headers..."
+    )
 
     new_header = MutableHeaders(request._headers)
     new_header["customer"] = json.dumps(customer.dict())
     request._headers = new_header
 
-    print("headers modified")
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Headers modified"
+    )
 
     return request
 
 
-async def verify_token_db(token):
+async def verify_token_db(token, request):
     user_data = usersDAO.get_user_data_by_token(token)
     if user_data is not None:
         expired = is_expired(user_data[2])
         return expired
 
     else:
-        return await validate_token(token)
+        return await validate_token(token, request)
 
 
 def is_expired(last_use_date):
@@ -49,17 +74,27 @@ def is_expired(last_use_date):
 
 
 def update_date(token):
-    print("updating last use date")
     usersDAO.update_token_date(token)
 
 
 def update_token(username, token):
-    print("updating token...")
     usersDAO.update_user_data(username, token)
 
 
-async def validate_token(token):
-    print("validating token...")
+async def validate_token(token, request):
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Validating token..."
+    )
     transport = AIOHTTPTransport(url=os.getenv("MAGENTO_URL_DOCKER"), headers={"Authorization": "Bearer " + token})
     client = Client(transport=transport, fetch_schema_from_transport=True)
 
@@ -67,10 +102,35 @@ async def validate_token(token):
 
     try:
         customer_data = await client.execute_async(query)
+        logger.info(
+            "INFO    - ["
+            + str(datetime.now())
+            + "]: "
+            + str(request.client.host)
+            + ":"
+            + str(request.client.port)
+            + " - "
+            + str(request.method)
+            + " - "
+            + str(request.url.path)
+            + " - Token validated"
+        )
 
     except Exception as ex:
-        print("invalid token...")
-        print(ex)
+        logger.info(
+            "ERROR   - ["
+            + str(datetime.now())
+            + "]: "
+            + str(request.client.host)
+            + ":"
+            + str(request.client.port)
+            + " - "
+            + str(request.method)
+            + " - "
+            + str(request.url.path)
+            + " - Magento: invalid token "
+            + str(ex)
+        )
         return JSONResponse(content={"message": "Invalid token"}, status_code=401)
 
     customer_data["customer"]["username"] = customer_data["customer"].pop("email")

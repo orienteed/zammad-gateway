@@ -7,13 +7,29 @@ from fastapi.security import HTTPBearer
 from models.tickets.ticket_articles.model import TicketComment
 import os
 import requests
+from logs.setup import logger
+from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
 
 
 @router.get("/by_ticket/{ticket_id}")
-def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+def get_ticket_comments(ticket_id: int, request: Request, authorization: str = Depends(token_auth_scheme), expand: bool = False):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Fetching ticket comments..."
+    )
 
     customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
@@ -31,6 +47,20 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
         if article["internal"] is False:
             external_articles.append(article)
 
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Ticket comments fetched "
+    )
+
     return external_articles
 
 
@@ -38,6 +68,20 @@ def get_ticket_comments(ticket_id: int, authorization: str = Depends(token_auth_
 def send_comment(
     ticket_comment: TicketComment, authorization: str = Depends(token_auth_scheme), expand: bool = False, request: Request = None
 ):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Sending comment..."
+    )
 
     username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
@@ -72,7 +116,34 @@ def send_comment(
         reply = requests.post(
             "{}/api/v1/ticket_articles".format(os.getenv("ZAMMAD_URL_DOCKER")), headers=customHeaders, params=customParams, json=customBody
         )
+        logger.info(
+            "INFO    - ["
+            + str(datetime.now())
+            + "]: "
+            + str(request.client.host)
+            + ":"
+            + str(request.client.port)
+            + " - "
+            + str(request.method)
+            + " - "
+            + str(request.url.path)
+            + " - Comment sent"
+        )
     else:
-        return JSONResponse({"message": "Reopen the ticket to send a new message"})
+        response = JSONResponse({"message": "Reopen the ticket to send a new message"})
+        logger.info(
+            "INFO    - ["
+            + str(datetime.now())
+            + "]: "
+            + str(request.client.host)
+            + ":"
+            + str(request.client.port)
+            + " - "
+            + str(request.method)
+            + " - "
+            + str(request.url.path)
+            + " - Reopen the ticket to send a new message"
+        )
+        return response
 
     return reply.json()

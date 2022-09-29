@@ -8,6 +8,8 @@ from fastapi.security import HTTPBearer
 from models.users.model import Customer, Customer_update
 import os
 import requests
+from logs.setup import logger
+from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
@@ -52,7 +54,22 @@ def getCustomer(customer: Customer):
 
 
 @router.put("/")
-def modify_customer(authorization: str = Depends(token_auth_scheme), customer: Customer_update = None, request: Request = None):
+def modify_customer(request: Request, authorization: str = Depends(token_auth_scheme), customer: Customer_update = None):
+
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Updading customer..."
+    )
+
     user_data = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
     print(user_data[3])
@@ -70,6 +87,18 @@ def modify_customer(authorization: str = Depends(token_auth_scheme), customer: C
         json=customBody,
     )
 
-    print(reply.json())
+    logger.info(
+        "INFO    - ["
+        + str(datetime.now())
+        + "]: "
+        + str(request.client.host)
+        + ":"
+        + str(request.client.port)
+        + " - "
+        + str(request.method)
+        + " - "
+        + str(request.url.path)
+        + " - Customer updated"
+    )
 
     return JSONResponse({"message": "User modification successfully"})
