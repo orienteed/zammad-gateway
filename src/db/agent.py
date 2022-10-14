@@ -2,11 +2,6 @@ import sqlite3
 
 
 class Agent:
-    def __new__(cls):
-        if not hasattr(cls, "instance"):
-            cls.instance = super(Agent, cls).__new__(cls)
-        return cls.instance
-
     def __init__(self):
         self.db_connection = None
         self.db_cursor = None

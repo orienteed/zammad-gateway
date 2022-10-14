@@ -3,12 +3,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from metadata.api_metadata import title, description, contact, version, license_info
 from metadata.tags_metadata import tags_metadata
+from services.organizations.endpoint import update_organization
 from services.router import api_router
 from services.tickets.tickets_states.endpoint import update_states
-from services.organizations.endpoint import update_organization
-from logs.setup import logger
-import os
-import requests
 
 
 def initialTasks():

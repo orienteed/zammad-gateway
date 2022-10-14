@@ -1,12 +1,10 @@
-from fastapi.routing import APIRoute
+from .auth_functions import validate_token, verify_token_db, update_date, update_token, modify_headers
+from datetime import datetime
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
-from models.users.model import Customer
-from .auth_functions import validate_token, verify_token_db, update_date, update_token, modify_headers
-
+from fastapi.routing import APIRoute
 from logs.setup import logger
-from datetime import datetime
+from models.users.model import Customer
 
 
 class VerifyTokenRoute(APIRoute):

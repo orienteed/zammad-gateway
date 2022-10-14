@@ -1,15 +1,15 @@
 from auth.middleware import VerifyTokenRoute
+from datetime import datetime
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
+from logs.setup import logger
 from models.users.model import Customer, Customer_update
 import os
 import requests
-from logs.setup import logger
-from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
@@ -71,8 +71,6 @@ def modify_customer(request: Request, authorization: str = Depends(token_auth_sc
     )
 
     user_data = usersDAO.get_user_data_by_token(request.headers.get("api-authorization"))
-
-    print(user_data[3])
 
     customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 

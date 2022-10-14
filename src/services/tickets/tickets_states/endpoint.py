@@ -1,14 +1,11 @@
-from traceback import print_tb
-from fastapi import APIRouter, Response, Depends
-import os
-import requests
-import json
-from fastapi.security import HTTPBearer
 from auth.middleware import VerifyTokenRoute
 from datetime import datetime
-
+from fastapi import APIRouter, Response, Depends
+from fastapi.security import HTTPBearer
 from logs.setup import logger
-from fastapi.requests import Request
+import json
+import os
+import requests
 
 
 router = APIRouter(route_class=VerifyTokenRoute)

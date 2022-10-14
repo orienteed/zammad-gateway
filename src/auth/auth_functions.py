@@ -7,12 +7,12 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from gql import Client
 from gql.transport.aiohttp import AIOHTTPTransport
+from logs.setup import logger
 from models.users.model import Customer
 from starlette.datastructures import MutableHeaders
 import json
-import os
 import jwt
-from logs.setup import logger
+import os
 
 load_dotenv()
 

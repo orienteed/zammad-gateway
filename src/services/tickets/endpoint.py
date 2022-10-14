@@ -1,15 +1,15 @@
 from auth.middleware import VerifyTokenRoute
+from datetime import datetime
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.security import HTTPBearer
+from logs.setup import logger
 from models.tickets.model import Ticket
 from models.tickets.model import Ticket_update
 from pydantic import Json
 import os
 import requests
-from logs.setup import logger
-from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()
