@@ -1,5 +1,5 @@
-from enum import Enum
 from .tickets_states.model import State
+from enum import Enum
 from pydantic import BaseModel
 from typing import List, Optional
 

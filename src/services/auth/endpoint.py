@@ -1,15 +1,15 @@
 from ..users.endpoint import createCustomer, getCustomer
 from auth.auth_functions import generate_chatbot_token
 from auth.middleware import VerifyTokenRoute
+from datetime import datetime
 from db.usersDAO import usersDAO
 from fastapi import APIRouter, Depends, Body
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer
+from logs.setup import logger
 from models.users.model import Customer
 import json
-from logs.setup import logger
-from datetime import datetime
 
 router = APIRouter(route_class=VerifyTokenRoute)
 token_auth_scheme = HTTPBearer()

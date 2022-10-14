@@ -1,9 +1,9 @@
+from auth.middleware import VerifyTokenRoute
 from fastapi import APIRouter, Response, Depends
+from fastapi.security import HTTPBearer
+import json
 import os
 import requests
-import json
-from fastapi.security import HTTPBearer
-from auth.middleware import VerifyTokenRoute
 
 
 router = APIRouter(route_class=VerifyTokenRoute)

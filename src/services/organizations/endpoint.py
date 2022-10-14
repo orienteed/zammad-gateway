@@ -1,9 +1,7 @@
 from datetime import datetime
-import requests
-import os
-from datetime import datetime
-
 from logs.setup import logger
+import os
+import requests
 
 
 def update_organization():

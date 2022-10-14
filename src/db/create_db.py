@@ -9,11 +9,9 @@ try:
         last_use_date TEXT NOT NULL);"""
 
     cursor = db_connection.cursor()
-    print("successfully conected to db")
     cursor.execute(db_create_table_query)
     db_connection.commit()
-    print("table created")
-
+    print("Table created")
     cursor.close()
 
 except sqlite3.Error as error:
