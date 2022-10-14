@@ -70,7 +70,7 @@ def modify_customer(request: Request, authorization: str = Depends(token_auth_sc
         + " - Updading customer..."
     )
 
-    user_data = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
+    user_data = usersDAO.get_user_data_by_token(request.headers.get("api-authorization"))
 
     print(user_data[3])
 

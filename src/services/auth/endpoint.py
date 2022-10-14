@@ -35,7 +35,7 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
     customer = json.loads(request.headers["customer"])
     customer = Customer(**customer)
 
-    token = request.headers.get("csr-authorization")
+    token = request.headers.get("api-authorization")
     username = customer.username
 
     user = usersDAO.get_user_data_by_username(username)
@@ -80,7 +80,7 @@ async def login(authorization: str = Depends(token_auth_scheme), request: Reques
 
 @router.post("/logout")
 async def logout(authorization: str = Depends(token_auth_scheme), request: Request = None):
-    token = request.headers.get("csr-authorization")
+    token = request.headers.get("api-authorization")
     usersDAO.remove_token_by_token(token)
     logger.info(
         "INFO    - ["
@@ -115,7 +115,7 @@ async def get_chatBot_token(authorization: str = Depends(token_auth_scheme), req
         + " - Generating chatbot token..."
     )
 
-    token = request.headers.get("csr-authorization")
+    token = request.headers.get("api-authorization")
     user = usersDAO.get_user_data_by_token(token)
 
     if user is not None:
