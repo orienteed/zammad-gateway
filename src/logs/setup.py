@@ -5,7 +5,7 @@ import os
 if not os.path.exists("logs/tmp"):
     os.makedirs("logs/tmp")
 
-file_name = 'logs/tmp/zammad-gateway.log'
+file_name = "logs/tmp/zammad-gateway.log"
 
 logger = logging.getLogger("Zammad_logger")
 logger.setLevel(logging.INFO)
