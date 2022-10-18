@@ -43,7 +43,7 @@ def get_tickets(
         + " - Fetching tickets..."
     )
 
-    username = usersDAO.get_user_data_by_token(request.headers.get("api-authorization"))
+    username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
     customHeaders = {"Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")), "Content-Type": "application/json"}
 
@@ -160,7 +160,7 @@ def create_ticket(ticket: Ticket, request: Request, authorization: str = Depends
         + " - Creating ticket..."
     )
 
-    username = usersDAO.get_user_data_by_token(request.headers.get("api-authorization"))
+    username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
     customHeaders = {
         "Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")),
