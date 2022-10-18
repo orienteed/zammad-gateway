@@ -83,7 +83,7 @@ def send_comment(
         + " - Sending comment..."
     )
 
-    username = usersDAO.get_user_data_by_token(request.headers.get("api-authorization"))
+    username = usersDAO.get_user_data_by_token(request.headers.get("csr-authorization"))
 
     customHeaders = {
         "Authorization": "Token token={}".format(os.getenv("ZAMMAD_API_KEY_DOCKER")),
