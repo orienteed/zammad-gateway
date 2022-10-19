@@ -10,3 +10,6 @@ services:
       - MAGENTO_URL_DOCKER=${MAGENTO_URL_ENV}
       - ORGANIZATION_NAME_DOCKER=${ORGANIZATION_NAME_ENV}
       - CHATBOT_SECURITY_KEY_DOCKER=${CHATBOT_SECURITY_KEY_ENV}
+    volumes:
+      - ./src:/app
+    restart: unless-stopped
