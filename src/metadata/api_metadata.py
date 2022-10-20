@@ -2,38 +2,18 @@ from ensurepip import version
 
 
 title = "Zammad Gateway"
-description = """ Intermediate API endpoint that encapsulates/handles the authentication and request to the Zammad API (like a wrapper) and exposes a single, dedicated endpoint for POSTing the payloads.
-## Authentication
+description = """
+## What is Zammad Gateway?
+Zammad Gateway is an excellent tool for those who want to integrate Zammad with external systems but don't have the knowledge or time to develop a custom integration.
 
-Before all, you must **Authenticate it**.
+It is an intermediate API that encapsulates/handles the authentication and requests to the Zammad Helpdesk API (like a wrapper) and exposes some endpoints to interact with them. The Gateway is a straightforward and effective way to integrate Zammad with third-party systems.
 
-## Tickets
+This software can be installed on a server and configured to listen for incoming requests from external systems. It then forwards those requests to Zammad using the Zammad Helpdesk API.
 
-You will be able to:
+## How does it work?
 
-* **Create tickets**
-* **List tickets**
-* **View ticket comments**
-* **Download ticket attachments**
-* **Update the state of a ticket**
+You should use the header 'csr-authorization' with the Magento Customer token value to authenticate the requests.
 
-## State
-
-You will be able to:
-
-* **List ticket states**
-
-## Groups
-
-You will be able to:
-
-* **List groups**
-
-## Priorities
-
-You will be able to:
-
-* **List priorities**
 
 """
 

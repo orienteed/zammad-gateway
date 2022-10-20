@@ -1,0 +1,510 @@
+{
+	"info": {
+		"_postman_id": "99a2fed8-a0c4-424e-a0a6-02aa762a3c2b",
+		"name": "Zammad Gateway API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21365685"
+	},
+	"item": [
+		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Ticket articles",
+					"item": [
+						{
+							"name": "Send comment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ticket_id\": TICKET_ID,\r\n    \"body\": \"COMMENT\",\r\n    \"content_type\": \"text/plain\",\r\n    \"attachments\": [\r\n        {\r\n            \"filename\": \"FILENAME\",\r\n            \"data\": \"DATA_IN_BASE64\",\r\n            \"mime_type\": \"text/plain\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{zammad_url}}/csr/api/v1/ticket_articles/",
+									"host": [
+										"{{zammad_url}}"
+									],
+									"path": [
+										"csr",
+										"api",
+										"v1",
+										"ticket_articles",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get ticket comments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{zammad_url}}/csr/api/v1/ticket_articles/by_ticket/TICKET_ID",
+									"host": [
+										"{{zammad_url}}"
+									],
+									"path": [
+										"csr",
+										"api",
+										"v1",
+										"ticket_articles",
+										"by_ticket",
+										"TICKET_ID"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ticket attachment",
+					"item": [
+						{
+							"name": "Get attachments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{zammad_url}}/csr/api/v1/ticket_attachment/TICKET_ID/ARTICLE_ID/ATTACHMENT_ID",
+									"host": [
+										"{{zammad_url}}"
+									],
+									"path": [
+										"csr",
+										"api",
+										"v1",
+										"ticket_attachment",
+										"TICKET_ID",
+										"ARTICLE_ID",
+										"ATTACHMENT_ID"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ticket states",
+					"item": [
+						{
+							"name": "Get states",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{zammad_url}}/csr/api/v1/ticket_states",
+									"host": [
+										"{{zammad_url}}"
+									],
+									"path": [
+										"csr",
+										"api",
+										"v1",
+										"ticket_states"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/tickets/search?expand=True&page=1&per_page=8&limit=8&filters={\"status\":[], \"type\":[]}",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"tickets",
+								"search"
+							],
+							"query": [
+								{
+									"key": "expand",
+									"value": "True"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "8"
+								},
+								{
+									"key": "limit",
+									"value": "8"
+								},
+								{
+									"key": "filters",
+									"value": "{\"status\":[], \"type\":[]}"
+								},
+								{
+									"key": "order_by",
+									"value": "asc",
+									"disabled": true
+								},
+								{
+									"key": "sort_by",
+									"value": "group_id",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/tickets/search?search=SEARCH_TEXT",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"tickets",
+								"search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "SEARCH_TEXT",
+									"description": "Text to search into the tickets"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/tickets/TICKET_ID",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"tickets",
+								"TICKET_ID"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create ticket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"TICKET_TITLE\",\r\n    \"group\": \"TICKET_GROUP\",\r\n    \"article\": {\r\n        \"subject\": \"COMMENT_TITLE\",\r\n        \"body\": \"COMMENT\",\r\n        \"attachments\": [\r\n            {\r\n                \"filename\": \"FILENAME\",\r\n                \"data\": \"DATA_IN_BASE64\",\r\n                \"mime_type\": \"text/plain\"\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/tickets",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ticket",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"state\": \"NEW_TICKET_STATE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/tickets/3",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"tickets",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/auth/login",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get chatbot token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"locale\": \"en-US\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/auth/chatbot",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"auth",
+								"chatbot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/auth/logout",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Get groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/groups",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"groups"
+							],
+							"query": [
+								{
+									"key": "expand",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Priorities",
+			"item": [
+				{
+					"name": "Get priorities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/ticket_priorities",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"ticket_priorities"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"NEW_USERNAME\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zammad_url}}/csr/api/v1/users/",
+							"host": [
+								"{{zammad_url}}"
+							],
+							"path": [
+								"csr",
+								"api",
+								"v1",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "Token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({ ",
+					"    // These keys appears when you set a header by hand. Just for fun they are here",
+					"    disabled: false,",
+					"    description:{",
+					"        content: \"Authorization header\",",
+					"        type: \"text/plain\"",
+					"    },",
+					"    // Your header, effectively",
+					"    key: 'csr-authorization', ",
+					"    name: 'Authorization header', ",
+					"    // If you set a variable you can access it",
+					"    // HeaderTest here has value=\"ValueHeaderTest\"",
+					"    value: pm.collectionVariables.get(\"signin_token\")",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "zammad_url",
+			"value": "YOUR_ZAMMAD_URL_HERE",
+			"type": "string"
+		},
+		{
+			"key": "signin_token",
+			"value": "YOUR_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}
