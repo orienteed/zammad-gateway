@@ -2,7 +2,8 @@
 <h1>Zammad Gateway</h1>
 
 </br>
-</br>
+
+#### Table of Contents
 
 - [📢 What is Zammad Gateway?](#-what-is-zammad-gateway)
 - [✅ Requirements](#-requirements)
@@ -23,18 +24,12 @@ This software can be installed on a server and configured to listen for incoming
 
 ## 🛒 Supported Platforms
 
-<div style="display: flex; flex-direction: row; gap: 30px; margin: 20px 0">
-    <a href="https://business.adobe.com/products/magento/magento-commerce.html" target="_blank">
-        <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center">
-            <img src="./resources/MagentoLogo.svg" width="" height="60">
-            <p>Magento</p>
-        </div>
-    </a>
-    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center">
-        <img src="./resources/ComingSoon.png" width="" height="60">
-        <p>Stay tuned!</p>
-    </div>
-</div>
+<table>
+  <tr>
+    <td align="center"><a href="https://business.adobe.com/products/magento/magento-commerce.html"><img src="./resources/MagentoLogo.svg" width="60" height="60" alt=""/><br /><sub><b>Magento</b></sub></a><br /></td>
+    <td align="center"><a href="https://www.orienteed.com/en/blog"><img src="./resources/ComingSoon.png" width="60" height="60" alt=""/><br /><sub><b>Stay tuned!</b></sub></a><br /></td>
+  </tr>
+</table>
 
 </br>
 
@@ -58,15 +53,19 @@ Docker and docker-compose are also required. If you don't have them installed, y
 To install Zammad Gateway you need to follow these steps:
 
 1. Clone the repository with:
+
 ```
 git clone https://github.com/orienteed/zammad-gateway
 ```
+
 2. Copy the _.env.example_ file to _.env_.
 3. Fill _.env_ file with the required data.
 4. Run the following command to start the gateway:
+
 ```
 docker-compose up -d --build
 ```
+
 5. Now your gateway is running, you can see an endpoints summary in <a href="http://localhost:8081/docs" target="_blank">http://localhost:8081/docs</a>
 
 </br>
