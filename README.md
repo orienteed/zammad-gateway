@@ -6,6 +6,7 @@
 #### Table of Contents
 
 - [📢 What is Zammad Gateway?](#-what-is-zammad-gateway)
+- [🛒 Supported Platforms](#-supported-platforms)
 - [✅ Requirements](#-requirements)
 - [⚙️ Installation](#%EF%B8%8F-installation)
 - [🙌🏼 How to contribute](#-how-to-contribute)
