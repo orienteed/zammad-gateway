@@ -12,7 +12,7 @@ This software can be installed on a server and configured to listen for incoming
 
 ## How does it work?
 
-You should use the header 'csr-authorization' with the Magento Customer token value to authenticate the requests.
+You should use the header 'api-authorization' with the Magento Customer token value to authenticate the requests.
 
 
 """
