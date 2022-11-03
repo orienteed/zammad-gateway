@@ -476,7 +476,7 @@
 					"        type: \"text/plain\"",
 					"    },",
 					"    // Your header, effectively",
-					"    key: 'csr-authorization', ",
+					"    key: 'api-authorization', ",
 					"    name: 'Authorization header', ",
 					"    // If you set a variable you can access it",
 					"    // HeaderTest here has value=\"ValueHeaderTest\"",
